@@ -1,0 +1,15 @@
+server:
+  port: 8080
+  origin: ${ORIGIN:*}
+spring:
+  application:
+    name: cargame
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/cargame}
+  nats:
+    uri: ${NATS_URI:nats://localhost:4222}
+  bus:
+    uri: ${BUS_URI:amqp://plqjfazy:u1ESotT1SCKsjEAQ5XwwRVL4bN99GUYk@moose.rmq.cloudamqp.com/plqjfazy}
+
+
