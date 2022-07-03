@@ -30,7 +30,8 @@ public class InformacionDeJuegoQueryService implements InformacionDeJuegoService
                 .foreignField("aggregateRootId")
                 .as("carroAgregadoACarrail");
 
-        var aggregation = Aggregation.newAggregation(lookup);
+        var aggregation =
+                Aggregation.newAggregation(lookup);
 
         var tempo = mongoTemplate.aggregate(aggregation, "carril.CarrilCreado", String.class)
                 .getMappedResults().stream().collect(Collectors.toList());
