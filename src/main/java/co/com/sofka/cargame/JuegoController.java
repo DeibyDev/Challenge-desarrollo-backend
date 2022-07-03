@@ -5,9 +5,11 @@ import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.business.support.RequestCommand;
 import co.com.sofka.cargame.domain.juego.command.CrearJuegoCommand;
 import co.com.sofka.cargame.domain.juego.command.InicarJuegoCommand;
+import co.com.sofka.cargame.domain.juego.values.JuegoId;
 import co.com.sofka.cargame.infra.services.*;
 import co.com.sofka.cargame.usecase.CrearJuegoUseCase;
 import co.com.sofka.cargame.usecase.InicarJuegoUseCase;
+import co.com.sofka.cargame.usecase.model.CarroSobreCarril;
 import co.com.sofka.cargame.usecase.model.Score;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.asyn.SubscriberEvent;
@@ -32,6 +34,8 @@ public class JuegoController {
     private InicarJuegoUseCase inicarJuegoUseCase;
     @Autowired
     private RankingQueryService rankingQueryService;
+    @Autowired
+    private CarrilCarroQueryService carroQueryService;
 
     @PostMapping("/crearJuego")
     public String crearJuego(@RequestBody CrearJuegoCommand command) {
@@ -58,6 +62,14 @@ public class JuegoController {
                 .getScoreGame()
                 .stream()
                 .sorted(Comparator.comparing(Score::getTiempoRecorrido))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/carros/{juegoId}")
+    public List<CarroSobreCarril> obtenerCarros(@PathVariable("juegoId") String juegoId){
+        return carroQueryService
+                .getCarrosSobreCarriles(JuegoId.of(juegoId))
+                .stream()
                 .collect(Collectors.toList());
     }
 
