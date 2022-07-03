@@ -5,7 +5,6 @@ import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.cargame.SocketController;
 import co.com.sofka.cargame.infra.bus.EventListenerSubscriber;
 import co.com.sofka.cargame.infra.bus.EventSubscriber;
-import co.com.sofka.cargame.infra.bus.NATSEventSubscriber;
 import co.com.sofka.cargame.infra.services.CarrilCarroQueryService;
 import co.com.sofka.cargame.infra.services.CarroQueryService;
 import co.com.sofka.cargame.infra.services.JuegoQueryService;
@@ -33,17 +32,7 @@ public class JuegoConfig {
         return new SubscriberEvent(eventStoreRepository, eventBus);
     }
 
-    @Bean
-    public EventSubscriber eventSubscriber(@Value("${spring.nats.uri}") String uri,
-                                           EventListenerSubscriber eventListenerSubscriber,
-                                           SocketController socketController) throws IOException, InterruptedException {
 
-        var eventSubs = new NATSEventSubscriber(uri, eventListenerSubscriber, socketController);
-        eventSubs.subscribe("juego.>", "handles.juego");
-        eventSubs.subscribe("carro.>", "handles.carro");
-        eventSubs.subscribe("carril.>", "handles.carril");
-        return eventSubs;
-    }
 
     @Bean
     public ServiceBuilder serviceBuilder(

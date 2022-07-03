@@ -41,6 +41,7 @@ public class RabbitMQConsumer {
     public void recievedMessageCarro(Message<String> message) {
         messageShared(message);
     }
+
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "carril.handles", durable = "true"),
             exchange = @Exchange(value = "gameextraction", type = "topic"),

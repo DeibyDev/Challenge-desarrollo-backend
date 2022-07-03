@@ -6,10 +6,7 @@ spring:
     name: cargame
   data:
     mongodb:
-      uri: ${MONGO_URI:mongodb://localhost:27017/cargame}
-  nats:
-    uri: ${NATS_URI:nats://localhost:4222}
-  bus:
-    uri: ${BUS_URI:amqp://plqjfazy:u1ESotT1SCKsjEAQ5XwwRVL4bN99GUYk@moose.rmq.cloudamqp.com/plqjfazy}
+      uri: ${MONGO_URI:mongodb+srv://desierra:admin@cluster0.f49rfgl.mongodb.net/cargame?retryWrites=true&w=majority}
 
-
+  rabbitmq:
+    addresses: ${BUS_URI:amqps://plqjfazy:u1ESotT1SCKsjEAQ5XwwRVL4bN99GUYk@moose.rmq.cloudamqp.com/plqjfazy}

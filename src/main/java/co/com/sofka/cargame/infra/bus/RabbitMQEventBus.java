@@ -1,6 +1,7 @@
 package co.com.sofka.cargame.infra.bus;
 
 import co.com.sofka.business.generic.BusinessException;
+import co.com.sofka.cargame.infra.config.JuegoConfig;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
 import co.com.sofka.infraestructure.bus.notification.ErrorNotification;
@@ -8,57 +9,50 @@ import co.com.sofka.infraestructure.bus.notification.SuccessNotification;
 import co.com.sofka.infraestructure.bus.serialize.ErrorNotificationSerializer;
 import co.com.sofka.infraestructure.bus.serialize.SuccessNotificationSerializer;
 import co.com.sofka.infraestructure.event.ErrorEvent;
-import io.nats.client.Connection;
-import io.nats.client.Nats;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
+import org.slf4j.Logger;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Service;
 
-public class NATSEventBus implements EventBus {
-    private static final String ORIGIN = "cargame";
+import static co.com.sofka.cargame.infra.config.JuegoConfig.EXCHANGE;
+import static org.springframework.http.HttpHeaders.ORIGIN;
+
+@Service
+public class RabbitMQEventBus implements EventBus {
+
     private static final String TOPIC_ERROR = "cargame.error";
     private static final String TOPIC_BUSINESS_ERROR = "cargame.business.error";
-    private static final Logger logger = Logger.getLogger(NATSEventBus.class.getName());
-
-    private final Connection nc;
+    private final RabbitTemplate rabbitTemplate;
     private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    public NATSEventBus(@Value("${spring.nats.uri}") String natsUri, MongoTemplate mongoTemplate) throws IOException, InterruptedException {
-        this.nc = Nats.connect(natsUri);
+
+    public RabbitMQEventBus(RabbitTemplate rabbitTemplate, MongoTemplate mongoTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
         this.mongoTemplate = mongoTemplate;
     }
 
     @Override
-    public void publish(DomainEvent event) {
-        var notification = SuccessNotification.wrapEvent(ORIGIN, event);
+    public void publish(DomainEvent domainEvent) {
+        var notification = SuccessNotification.wrapEvent(ORIGIN, domainEvent);
         var notificationSerialization = SuccessNotificationSerializer.instance().serialize(notification);
-        nc.publish(event.type + "." + event.aggregateRootId(), notificationSerialization.getBytes());
-        mongoTemplate.save(event, event.type);
+        rabbitTemplate.convertAndSend(EXCHANGE, domainEvent.type, notificationSerialization.getBytes());
+        mongoTemplate.save(domainEvent, domainEvent.type);
     }
 
     @Override
     public void publishError(ErrorEvent errorEvent) {
-
         if (errorEvent.error instanceof BusinessException) {
             publishToTopic(TOPIC_BUSINESS_ERROR, errorEvent);
         } else {
             publishToTopic(TOPIC_ERROR, errorEvent);
         }
-        logger.log(Level.SEVERE, errorEvent.error.getMessage());
-
     }
 
     public void publishToTopic(String topic, ErrorEvent errorEvent) {
-        var notification = ErrorNotification.wrapEvent(ORIGIN, errorEvent);
+        var notification = ErrorNotification.wrapEvent(JuegoConfig.EXCHANGE, errorEvent);
         var notificationSerialization = ErrorNotificationSerializer.instance().serialize(notification);
-        nc.publish(topic + "." + errorEvent.identify, notificationSerialization.getBytes());
-        logger.warning("###### Error Event published to " + topic);
-    }
+        rabbitTemplate.convertAndSend(topic + "." + errorEvent.identify, notificationSerialization.getBytes());
 
+    }
 }
