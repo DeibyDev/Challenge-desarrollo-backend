@@ -9,16 +9,15 @@
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <springboot.version>2.5.4</springboot.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+
+
     </properties>
 
+
     <dependencies>
-        <dependency>
-            <groupId>io.nats</groupId>
-            <artifactId>jnats</artifactId>
-            <version>2.8.0</version>
-        </dependency>
         <dependency>
             <groupId>co.com.sofka</groupId>
             <artifactId>domain</artifactId>
@@ -83,31 +82,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-            <version>2.7.0</version>
+            <version>${springboot.version}</version>
         </dependency>
-
     </dependencies>
     <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>11</source>
-                        <target>11</target>
-                    </configuration>
-                </plugin>
-
-
-
+        <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-
+                <version>${springboot.version}</version>
                 <configuration>
-                    <mainClass>
-                        co.com.sofka.cargame.Application
-                    </mainClass>
+                    <mainClass>co.com.sofka.cargame.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>
@@ -120,7 +105,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -139,14 +124,7 @@
                     </execution>
                 </executions>
             </plugin>
-
-
         </plugins>
-
-
     </build>
-
-
-
 
 </project>
