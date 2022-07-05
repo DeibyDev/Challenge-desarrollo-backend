@@ -34,7 +34,7 @@
           if (!connected) {
               var aggregateId = document.getElementById("aggregateId").value;
               console.log("Val: " + aggregateId);
-              socket = new WebSocket("ws://" + localhost:8080 + "/retrieve/" + aggregateId);
+              socket = new WebSocket("ws://" + challengebackenv2.herokuapp.com + "/retrieve/" + aggregateId);
 
               socket.onmessage = function(m) {
                   console.log("Got message: " + m.data);
