@@ -28,22 +28,22 @@
     </div>
 </div>
 <script type="text/javascript">
-      var connected = false;
-      var socket;
-      document.getElementById("connect").onclick = function() {
-          if (!connected) {
-              var aggregateId = document.getElementById("aggregateId").value;
-              console.log("Val: " + aggregateId);
-              socket = new WebSocket("ws://" + localhost:8080 + "/retrieve/" + aggregateId);
+    var connected = false;
+    var socket;
+    document.getElementById("connect").onclick = function() {
+        if (!connected) {
+            var aggregateId = document.getElementById("aggregateId").value;
+            console.log("Val: " + aggregateId);
+            socket = new WebSocket("ws://" + location.host + "/retrieve/" + aggregateId);
 
-              socket.onmessage = function(m) {
-                  console.log("Got message: " + m.data);
-                  document.getElementById("result").append(m.data + "\n");
-              };
-          }
-      };
+            socket.onmessage = function(m) {
+                console.log("Got message: " + m.data);
+                document.getElementById("result").append(m.data + "\n");
+            };
+        }
+    };
 
-    </script>
+</script>
 </body>
 
 </html>
